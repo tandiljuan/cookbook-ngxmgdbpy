@@ -19,3 +19,6 @@
 
 # Install python and pip
 include_recipe "python"
+
+# Install Bottle using pip
+python_pip "bottle"
