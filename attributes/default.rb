@@ -7,6 +7,7 @@ default[:core][:user]           = "vagrant"
 default[:core][:group]          = "vagrant"
 default[:core][:workspace_path] = '/opt/workspace'
 default[:core][:project_path]   = node[:core][:workspace_path]
+default[:core][:project_name]   = "BottleApp"
 
 # SAMBA Settings
 default[:smbfs][:install] = false
