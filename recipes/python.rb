@@ -20,6 +20,9 @@
 # Install python and pip
 include_recipe "python"
 
+# Install uWSGI using pip
+python_pip "uwsgi"
+
 # Install Bottle using pip
 python_pip "bottle"
 
