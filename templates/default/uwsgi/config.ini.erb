@@ -5,6 +5,7 @@
 socket         = <%= @tcp_socket %>
 <% else -%>
 socket         = <%= @unix_socket %>
+# Change socket permissions so Nginx can talk with uWSGI
 chmod-socket   = 666
 <% end -%>
 
@@ -13,7 +14,18 @@ chdir          = <%= @project_path %>
 # Load .wsgi file
 wsgi-file      = <%= @project_app %>
 
+# Spawn the specified number of workers/processes
+processes      = <%= @processes %>
+# Run each worker in prethreaded mode with the specified number of threads
+threads        = <%= @threads %>
+
+# Make uWSGI exit rather than go into "full dynamic mode"
+need-app       = true
+# Load apps in each worker instead of the master
+lazy-apps      = true
+
+# Do not use multiple interpreters (where available)
+single-interpreter = true
+
 # Monitor python modules mtime to trigger reload (use only in development)
 py-autoreload  = 1
-<%# processes      = 4 -%>
-<%# threads        = 2 -%>

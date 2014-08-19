@@ -52,12 +52,13 @@ template node[:uwsgi][:config_file] do
   group node[:core][:group]
   mode 00664
   variables({
-    :app_name => node[:core][:project_name],
     :use_tcp => node[:uwsgi][:use_tcp],
     :tcp_socket => node[:uwsgi][:tcp_socket],
     :unix_socket => node[:uwsgi][:unix_socket],
     :project_path => node[:python][:project_path],
     :project_app => node[:python][:project_app],
+    :processes => node[:uwsgi][:processes],
+    :threads => node[:uwsgi][:threads],
   })
 end
 
