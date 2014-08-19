@@ -25,3 +25,11 @@ default[:cookbook][:mongodb][:port] =  node[:mongodb][:config][:port]
 # Python Settings
 default[:python][:project_path] = node[:core][:project_path]
 default[:python][:project_app]  = "app.py"
+
+# uWSGI Settings
+default[:uwsgi][:pid_path]    = "/var/run/uwsgi-#{node[:core][:project_name]}.pid"
+default[:uwsgi][:config_file] = "/opt/uwsgi/#{node[:core][:project_name]}.ini"
+default[:uwsgi][:config_type] = :ini
+default[:uwsgi][:unix_socket] = "/opt/uwsgi/#{node[:core][:project_name]}.sock"
+default[:uwsgi][:tcp_socket]  = "127.0.0.1:8080"
+default[:uwsgi][:use_tcp]     = false
