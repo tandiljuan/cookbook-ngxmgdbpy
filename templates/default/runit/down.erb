@@ -1,0 +1,5 @@
+#!/bin/sh
+
+PID=<%= @uwsgi_pid_path %>
+
+if [ -f $PID ]; then kill -9 `cat $PID`; rm $PID; fi

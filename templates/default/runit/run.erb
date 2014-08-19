@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ ! -d "<%= @project_path %>" ] || [ ! "$(ls -A <%= @project_path %> &>/dev/null)" ]
+then
+  exit 1
+fi
+
+exec 2>&1
+exec \
+  chpst -u <%= @uid %>:<%= @gid %> \
+        -U <%= @uid %>:<%= @gid %> \
+    uwsgi \
+      --ini <%= @uwsgi_config_file %> \
+      --pidfile <%= @uwsgi_pid_path %>

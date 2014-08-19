@@ -86,3 +86,62 @@ template File.join([node[:python][:project_path], node[:python][:project_app]]) 
     (Dir.entries(node[:python][:project_path]) - [".dumb"]).size <= 2
   end
 end
+
+
+# Setup uWSGI service
+# -------------------
+
+runit_service_name   = node[:core][:project_name].downcase
+runit_service_folder = File.join([node['runit']['sv_dir'], runit_service_name])
+
+# Create folder for `control` scripts
+directory File.join([runit_service_folder, "control"]) do
+  mode 00775
+  recursive true
+  action :create
+end
+
+# Create `d` (down) script
+template File.join([runit_service_folder, "control", "d"]) do
+  source "runit/down.erb"
+  mode 00775
+  variables ({
+    :uwsgi_pid_path => node[:uwsgi][:pid_path],
+  })
+end
+
+# Create folder for log script
+directory File.join([runit_service_folder, "log"]) do
+  mode 00775
+  recursive true
+  action :create
+end
+
+# Create log (`run`) script
+template File.join([runit_service_folder, "log", "run"]) do
+  source "runit/log.erb"
+  mode 00775
+  variables ({
+    :uid => node[:core][:user],
+    :gid => node[:core][:group],
+    :log_path => node[:runit][:log_path],
+  })
+end
+
+# Create `run` (up/start/main) script
+template File.join([runit_service_folder, "run"]) do
+  source "runit/run.erb"
+  mode 00775
+  variables ({
+    :uwsgi_pid_path => node[:uwsgi][:pid_path],
+    :uwsgi_config_file => node[:uwsgi][:config_file],
+    :uid => node[:core][:user],
+    :gid => node[:core][:group],
+    :project_path => node[:core][:project_path],
+  })
+end
+
+# Enable the runit service
+runit_service runit_service_name do
+  sv_templates false
+end

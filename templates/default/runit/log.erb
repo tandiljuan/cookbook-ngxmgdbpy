@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ ! -d "<%= @log_path %>" ]
+then
+  mkdir -p <%= @log_path %>
+  chown -R <%= @uid %>.<%= @gid %> <%= @log_path %>
+fi
+
+cd <%= @log_path %>
+
+exec \
+  chpst -u <%= @uid %>:<%= @gid %> \
+        -U <%= @uid %>:<%= @gid %> \
+    svlogd -tt <%= @log_path %>
