@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: cookbook-ngxmgdbpy
-# Recipe:: default
+# Recipe:: mongodb
 #
 # Author:: Juan Manuel Lopez
 #
@@ -17,6 +17,4 @@
 # limitations under the License.
 #
 
-include_recipe "cookbook-ngxmgdbpy::init"
-include_recipe "cookbook-ngxmgdbpy::nginx"
-include_recipe "cookbook-ngxmgdbpy::mongodb"
+include_recipe "mongodb"
