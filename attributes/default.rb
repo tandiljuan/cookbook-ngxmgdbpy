@@ -33,6 +33,8 @@ default[:uwsgi][:config_type] = :ini
 default[:uwsgi][:unix_socket] = "/opt/uwsgi/#{node[:core][:project_name].downcase}.sock"
 default[:uwsgi][:tcp_socket]  = "127.0.0.1:8080"
 default[:uwsgi][:use_tcp]     = false
+default[:uwsgi][:processes]   = 1
+default[:uwsgi][:threads]     = 1
 
 # runit Settings
 default[:runit][:log_path] = "/var/log/service/#{node[:core][:project_name].downcase}"
