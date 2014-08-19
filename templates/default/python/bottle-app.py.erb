@@ -1,0 +1,19 @@
+import os
+from bottle import route, run, template, default_app
+
+@route('/')
+def main():
+    return "Hello from Bottle!\n"
+
+@route('/hello/<name>')
+def hello(name):
+    return template("Hello {{name}}!\n", name=name)
+
+if __name__ == "__main__":
+    # Interactive mode
+    run(host='localhost', port=8080)
+else:
+    # Mod WSGI launch
+    <%# The following line is not needed because uWSGI use `chdir` -%>
+    <%# os.chdir(os.path.dirname(__file__)) -%>
+    application = default_app()

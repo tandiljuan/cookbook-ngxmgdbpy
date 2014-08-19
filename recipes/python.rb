@@ -22,3 +22,14 @@ include_recipe "python"
 
 # Install Bottle using pip
 python_pip "bottle"
+
+# Create a simple demo app, if there is no app
+template File.join([node[:python][:project_path], node[:python][:project_app]]) do
+  source "python/bottle-app.py.erb"
+  owner node[:core][:user]
+  group node[:core][:group]
+  mode 00664
+  only_if do
+    (Dir.entries(node[:python][:project_path]) - [".dumb"]).size <= 2
+  end
+end
