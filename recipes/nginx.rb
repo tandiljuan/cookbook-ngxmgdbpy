@@ -18,3 +18,30 @@
 #
 
 include_recipe "nginx"
+
+# Create Nginx site configuration
+template File.join(["/etc/nginx/sites-available", node[:core][:project_name]]) do
+  source "nginx/python.erb"
+  owner node[:core][:user]
+  group node[:core][:group]
+  mode 00664
+  variables({
+    :app_name => node[:core][:project_name],
+    :use_tcp => node[:uwsgi][:use_tcp],
+    :tcp_socket => node[:uwsgi][:tcp_socket],
+    :unix_socket => node[:uwsgi][:unix_socket],
+    :listen_port => node[:nginx][:listen_port],
+    :hostname => node['hostname'],
+    :logdir => node['nginx']['log_dir']
+  })
+  action :create
+  notifies :restart, "service[nginx]"
+end
+
+# Enable Nginx site
+link File.join(["/etc/nginx/sites-enabled", node[:core][:project_name]]) do
+  to File.join(["/etc/nginx/sites-available", node[:core][:project_name]])
+  owner node[:core][:user]
+  group node[:core][:group]
+  action :create
+end

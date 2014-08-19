@@ -1,0 +1,22 @@
+# The upstream component Nginx needs to connect to
+upstream uwsgi_<%= @app_name %> {
+    <% if @use_tcp -%>
+    # Web Port socket
+    server <%= @tcp_socket %>;
+    <% else -%>
+    # Unix file socket
+    server unix://<%= @unix_socket %>;
+    <% end -%>
+}
+
+server {
+  listen   <%= @listen_port %>;
+  server_name  <%= @hostname %>;
+
+  access_log  <%= @logdir %>/<%= @hostname %>.access.log;
+
+  location / {
+    include uwsgi_params;
+    uwsgi_pass uwsgi_<%= @app_name %>;
+  }
+}
