@@ -1,13 +1,44 @@
 import os
 from bottle import route, run, template, default_app
+from pymongo import MongoClient
+
+
+# Making a Connection
+mongo_client = MongoClient("<%= @mongo_host %>", <%= @mongo_port %>)
+
+# Getting a Database
+db = mongo_client['test-database']
+
+# Getting a Collection
+collection = db['test-collection']
+
 
 @route('/')
 def main():
-    return "Hello from Bottle!\n"
+    name = "World"
 
-@route('/hello/<name>')
-def hello(name):
+    if collection.count():
+        row = collection.find_one()
+        name = row["name"]
+
     return template("Hello {{name}}!\n", name=name)
+
+
+@route('/set/<name>')
+def set(name):
+
+    if collection.count():
+        row = collection.find_one()
+    else:
+        row = {"name": ""}
+
+    row["name"] = name
+
+    collection.save(row)
+
+    return template("Name '{{name}}' has been saved.\n", name=name)
+
+
 
 if __name__ == "__main__":
     # Interactive mode
