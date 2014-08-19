@@ -1,0 +1,22 @@
+[uwsgi]
+
+# Bind to the specified UNIX/TCP socket using default protocol
+<% if @use_tcp -%>
+socket         = <%= @tcp_socket %>
+<% else -%>
+socket         = <%= @unix_socket %>
+chmod-socket   = 666
+<% end -%>
+
+# chdir to specified directory before apps loading
+chdir          = <%= @project_path %>
+# Load .wsgi file
+wsgi-file      = <%= @project_app %>
+
+# Monitor python modules mtime to trigger reload (use only in development)
+py-autoreload  = 1
+<%# processes      = 4 -%>
+<%# threads        = 2 -%>
+
+# Set/Append a logger
+logger         = syslog:uwsgi.<%= @app_name %>
