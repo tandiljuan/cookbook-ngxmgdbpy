@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: cookbook-core
+# Cookbook Name:: cookbook-ngxmgdbpy
 # Recipe:: init
 #
 # Author:: Juan Manuel Lopez
