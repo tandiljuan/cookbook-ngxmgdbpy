@@ -17,6 +17,9 @@
 # limitations under the License.
 #
 
+# Installs runit and provides the runit_service resource for managing processes
+include_recipe "runit"
+
 # Install python and pip
 include_recipe "python"
 
