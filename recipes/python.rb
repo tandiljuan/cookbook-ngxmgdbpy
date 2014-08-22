@@ -56,7 +56,10 @@ template node[:uwsgi][:config_file] do
     :tcp_socket => node[:uwsgi][:tcp_socket],
     :unix_socket => node[:uwsgi][:unix_socket],
     :project_path => node[:python][:project_path],
-    :project_app => node[:python][:project_app],
+    :project_module => node[:python][:project_module],
+    :project_entry => node[:python][:project_entry],
+    :project_file => node[:python][:project_file],
+    :use_module => node[:python][:use_module],
     :processes => node[:uwsgi][:processes],
     :threads => node[:uwsgi][:threads],
   })
@@ -81,7 +84,7 @@ unless node[:uwsgi][:use_tcp]
 end
 
 # Create a simple demo app, if there is no app
-template File.join([node[:python][:project_path], node[:python][:project_app]]) do
+template File.join([node[:python][:project_path], node[:python][:project_file]]) do
   source "python/bottle-app.py.erb"
   owner node[:core][:user]
   group node[:core][:group]

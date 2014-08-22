@@ -11,8 +11,15 @@ chmod-socket                        = 666
 
 # chdir to specified directory before apps loading
 chdir                               = <%= @project_path %>
+<% if @use_module -%>
+# Load wsgi module
+wsgi                                = <%= @project_module %>:<%= @project_entry %>
+# Add directory (or glob) to pythonpath
+pythonpath                          = <%= File.join(@project_path, @project_module) %>
+<% else -%>
 # Load .wsgi file
-wsgi-file                           = <%= @project_app %>
+wsgi-file                           = <%= @project_file %>
+<% end -%>
 
 # Spawn the specified number of workers/processes
 processes                           = <%= @processes %>
@@ -27,5 +34,9 @@ lazy-apps                           = true
 # Do not use multiple interpreters (where available)
 single-interpreter                  = true
 
+<% if %( development ).include? node.chef_environment -%>
 # Monitor python modules mtime to trigger reload (use only in development)
 py-autoreload                       = 1
+# Do not remap stdin to /dev/null
+honour-stdin                        = true
+<% end -%>
