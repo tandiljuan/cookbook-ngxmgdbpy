@@ -82,6 +82,9 @@ end
 
 # If there is no workspace, create one
 directory node[:core][:workspace_path] do
+  owner node[:core][:user]
+  group node[:core][:group]
+  mode 00775
   recursive true
   action :create
   only_if { not File.exist? node[:core][:workspace_path] }
