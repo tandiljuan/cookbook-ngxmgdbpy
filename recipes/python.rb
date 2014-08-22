@@ -32,6 +32,16 @@ python_pip "pymongo"
 # Install Bottle using pip
 python_pip "bottle"
 
+# Install lxml dependencies with apt
+%w( libxml2-dev libxslt-dev libz-dev ).each do |debpkg|
+  package debpkg do
+    action :install
+  end
+end
+
+# Install lxml using pip
+python_pip "lxml"
+
 
 # uWSGI
 # -----
