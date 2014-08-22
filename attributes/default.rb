@@ -40,6 +40,7 @@ override[:nginx][:group]               = node[:core][:group]
 # MongoDB Settings
 default[:cookbook][:mongodb][:host] =  "localhost"
 default[:cookbook][:mongodb][:port] =  node[:mongodb][:config][:port]
+default[:cookbook][:mongodb][:ddbb] =  "mongo_ddbb"
 
 # Python Settings
 default[:python][:project_path]   = node[:core][:project_path]
