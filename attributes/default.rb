@@ -42,8 +42,11 @@ default[:cookbook][:mongodb][:host] =  "localhost"
 default[:cookbook][:mongodb][:port] =  node[:mongodb][:config][:port]
 
 # Python Settings
-default[:python][:project_path] = node[:core][:project_path]
-default[:python][:project_app]  = "app.py"
+default[:python][:project_path]   = node[:core][:project_path]
+default[:python][:project_module] = "module"
+default[:python][:project_entry]  = "application"
+default[:python][:project_file]   = "application.py"
+default[:python][:use_module]     = false
 
 # uWSGI Settings
 default[:uwsgi][:pid_path]    = "/opt/uwsgi/#{node[:core][:project_name].downcase}.pid"
