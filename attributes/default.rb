@@ -17,6 +17,15 @@
 # limitations under the License.
 #
 
+#
+# List of environments
+# - development
+#
+
+# Override `chef_environment` variable with `chef_environment` attribute
+# @see  http://stackoverflow.com/q/19905431
+node.chef_environment = node[:chef_environment] if node[:chef_environment] != nil
+
 # Vagrant Settings
 default[:vagrant][:workspace_path]     = '/opt/vboxsf/workspace'
 default[:vagrant][:workspace_nfs_path] = '/opt/nfs/workspace'
