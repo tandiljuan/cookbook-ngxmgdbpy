@@ -34,6 +34,7 @@ default[:smbfs][:install] = false
 # Nginx Settings
 default[:nginx][:default_site_enabled] = false
 default[:nginx][:listen_port]          = 80
+default[:nginx][:server_name]          = node[:hostname]
 override[:nginx][:user]                = node[:core][:user]
 override[:nginx][:group]               = node[:core][:group]
 

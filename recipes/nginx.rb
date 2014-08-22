@@ -31,7 +31,7 @@ template File.join(["/etc/nginx/sites-available", node[:core][:project_name]]) d
     :tcp_socket => node[:uwsgi][:tcp_socket],
     :unix_socket => node[:uwsgi][:unix_socket],
     :listen_port => node[:nginx][:listen_port],
-    :hostname => node['hostname'],
+    :server_name => node[:nginx][:server_name],
     :logdir => node['nginx']['log_dir']
   })
   action :create

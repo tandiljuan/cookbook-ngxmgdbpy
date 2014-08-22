@@ -11,9 +11,9 @@ upstream uwsgi_<%= @app_name %> {
 
 server {
   listen   <%= @listen_port %>;
-  server_name  <%= @hostname %>;
+  server_name  <%= @server_name %>;
 
-  access_log  <%= @logdir %>/<%= @hostname %>.access.log;
+  access_log  <%= @logdir %>/<%= @server_name %>.access.log;
 
   location / {
     include uwsgi_params;
