@@ -166,3 +166,9 @@ end
 runit_service runit_service_name do
   sv_templates false
 end
+
+# Restart runit sevice
+service runit_service_name do
+  action :restart
+  notifies :restart, "service[nginx]"
+end
