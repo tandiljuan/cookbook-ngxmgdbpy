@@ -9,17 +9,19 @@ socket                              = <%= @unix_socket %>
 chmod-socket                        = 666
 <% end -%>
 
+<% if @use_module -%>
 # chdir to specified directory before apps loading
 chdir                               = <%= @project_path %>
-<% if @use_module -%>
 # Load wsgi module
 wsgi                                = <%= @project_module %>:<%= @project_entry %>
-# Add directory (or glob) to pythonpath
-pythonpath                          = <%= File.join(@project_path, @project_module) %>
 <% else -%>
+# chdir to specified directory before apps loading
+chdir                               = <%= File.join(@project_path, @project_module) %>
 # Load .wsgi file
 wsgi-file                           = <%= @project_file %>
 <% end -%>
+# Add directory (or glob) to pythonpath
+pythonpath                          = <%= File.join(@project_path, @project_module) %>
 
 # Spawn the specified number of workers/processes
 processes                           = <%= @processes %>
