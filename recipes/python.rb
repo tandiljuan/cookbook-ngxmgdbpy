@@ -24,13 +24,19 @@ include_recipe "runit"
 include_recipe "python"
 
 # Install uWSGI using pip
-python_pip "uwsgi"
+python_pip "uwsgi" do
+  version "2.0.6"
+end
 
 # Install PyMongo using pip
-python_pip "pymongo"
+python_pip "pymongo" do
+  version "2.7.2"
+end
 
 # Install Bottle using pip
-python_pip "bottle"
+python_pip "bottle" do
+  version "0.12.7"
+end
 
 # Install lxml dependencies with apt
 %w( libxml2-dev libxslt-dev libz-dev ).each do |debpkg|
@@ -40,7 +46,9 @@ python_pip "bottle"
 end
 
 # Install lxml using pip
-python_pip "lxml"
+python_pip "lxml" do
+  version "3.3.5"
+end
 
 
 # uWSGI
