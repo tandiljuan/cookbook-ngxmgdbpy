@@ -51,6 +51,20 @@ override[:nginx][:group]               = node[:core][:group]
 default[:cookbook][:mongodb][:host] =  "localhost"
 default[:cookbook][:mongodb][:port] =  node[:mongodb][:config][:port]
 default[:cookbook][:mongodb][:ddbb] =  "mongo_ddbb"
+default[:cookbook][:mongodb][:user][:name]  =  "user"
+default[:cookbook][:mongodb][:user][:pass]  =  "ZQhBV5xPdabn3gqxGMzQUJhL"
+default[:cookbook][:mongodb][:admin][:name] =  "admin"
+default[:cookbook][:mongodb][:admin][:pass] =  "Jp54VpQeEhcdnsstPThGk36V"
+
+default[:mongodb][:config][:auth]    = true
+default[:mongodb][:admin][:username] = node[:cookbook][:mongodb][:admin][:name]
+default[:mongodb][:admin][:password] = node[:cookbook][:mongodb][:admin][:pass]
+default[:mongodb][:users]            = [{
+    :username => node[:cookbook][:mongodb][:user][:name],
+    :password => node[:cookbook][:mongodb][:user][:pass],
+    :roles => %w( readWrite dbAdmin userAdmin ),
+    :database => node[:cookbook][:mongodb][:ddbb],
+}]
 
 # Python Settings
 default[:python][:project_path]   = node[:core][:project_path]
