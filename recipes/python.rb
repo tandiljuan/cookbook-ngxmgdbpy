@@ -110,6 +110,9 @@ template File.join([node[:python][:project_path], node[:python][:project_file]])
   variables({
     :mongo_host => node[:cookbook][:mongodb][:host],
     :mongo_port => node[:cookbook][:mongodb][:port],
+    :mongo_ddbb => node[:cookbook][:mongodb][:ddbb],
+    :mongo_user => node[:cookbook][:mongodb][:user][:name],
+    :mongo_pass => node[:cookbook][:mongodb][:user][:pass],
   })
   only_if do
     (Dir.entries(node[:python][:project_path]) - [".dumb"]).size <= 2

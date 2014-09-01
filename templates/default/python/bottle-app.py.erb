@@ -7,7 +7,10 @@ from pymongo import MongoClient
 mongo_client = MongoClient("<%= @mongo_host %>", <%= @mongo_port %>)
 
 # Getting a Database
-db = mongo_client['test-database']
+db = mongo_client["<%= @mongo_ddbb %>"]
+
+# Authenticate into DataBase
+db.authenticate("<%= @mongo_user %>", "<%= @mongo_pass %>")
 
 # Getting a Collection
 collection = db['test-collection']
