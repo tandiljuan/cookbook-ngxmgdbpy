@@ -48,9 +48,9 @@ override[:nginx][:user]                = node[:core][:user]
 override[:nginx][:group]               = node[:core][:group]
 
 # MongoDB Settings
-default[:cookbook][:mongodb][:host] =  "localhost"
-default[:cookbook][:mongodb][:port] =  node[:mongodb][:config][:port]
-default[:cookbook][:mongodb][:ddbb] =  "mongo_ddbb"
+default[:cookbook][:mongodb][:host]         =  "localhost"
+default[:cookbook][:mongodb][:port]         =  node[:mongodb][:config][:port]
+default[:cookbook][:mongodb][:ddbb]         =  "mongo_ddbb"
 default[:cookbook][:mongodb][:user][:name]  =  "user"
 default[:cookbook][:mongodb][:user][:pass]  =  "ZQhBV5xPdabn3gqxGMzQUJhL"
 default[:cookbook][:mongodb][:admin][:name] =  "admin"
