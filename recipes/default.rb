@@ -17,4 +17,7 @@
 # limitations under the License.
 #
 
+# Ensure that the build-essential recipe is the first one to be executed.
+include_recipe 'build-essential::default'
+
 include_recipe "cookbook-core::init"

@@ -6,5 +6,6 @@ description      "Bootstrap a vagrant environment"
 version          "0.0.1"
 
 depends "apt",              "~> 2.5.0"
+depends "build-essential",  "~> 2.0.6"
 depends "smbfs",            "~> 0.4.0"
 depends "vim",              "~> 1.1.2"
