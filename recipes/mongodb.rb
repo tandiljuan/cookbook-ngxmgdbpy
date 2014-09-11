@@ -17,6 +17,12 @@
 # limitations under the License.
 #
 
+# Install dependencies needed to compile `mongo` ruby gem.
+# @see  https://sethvargo.com/using-gems-with-chef/
+package 'libsasl2-dev' do
+  action :nothing
+end.run_action(:install)
+
 include_recipe "mongodb"
 include_recipe "mongodb::user_management"
 
