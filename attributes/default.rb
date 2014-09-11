@@ -26,6 +26,10 @@
 # @see  http://stackoverflow.com/q/19905431
 node.chef_environment = node[:chef_environment] if node[:chef_environment] != nil
 
+# For RubyGems that include native C extensions it is needed to do
+# the following.
+default['build-essential']['compile_time'] = true
+
 # Vagrant Settings
 default[:vagrant][:workspace_path]     = '/opt/vboxsf/workspace'
 default[:vagrant][:workspace_nfs_path] = '/opt/nfs/workspace'

@@ -6,6 +6,7 @@ description      "Setup a Nginx - MongoDB - Python environment"
 version          "0.0.1"
 
 depends "apt",              "~> 2.5.0"
+depends "build-essential",  "~> 2.0.6"
 depends "mongodb",          "~> 0.16.1"
 depends "nginx",            "~> 2.7.4"
 depends "python",           "~> 1.4.6"
