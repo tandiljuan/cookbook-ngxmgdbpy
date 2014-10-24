@@ -35,10 +35,3 @@ lazy-apps                           = true
 
 # Do not use multiple interpreters (where available)
 single-interpreter                  = true
-
-<% if %( development ).include? node.chef_environment -%>
-# Monitor python modules mtime to trigger reload (use only in development)
-py-autoreload                       = 1
-# Do not remap stdin to /dev/null
-honour-stdin                        = true
-<% end -%>

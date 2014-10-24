@@ -183,20 +183,9 @@ runit_service runit_service_name do
   sv_templates false
 end
 
-# On development environment `stop` and `start` instead of `restart`
-# Because of the uwsgi `py-autoreload` setting that generate two processes,
-# making the `restart` action return with 1 (instead of 0).
-
-# Stop runit sevice
-service "#{runit_service_name} stop" do
-  service_name runit_service_name
-  action :stop
-end
-
-# Start runit sevice
-service "#{runit_service_name} start" do
-  service_name runit_service_name
-  action :start
+# Restart runit sevice
+service runit_service_name do
+  action :restart
   notifies :restart, "service[nginx]"
 end
 
