@@ -2,6 +2,7 @@
 
 exec \
   <%= @script_fullpath %> \
+    --quiet \
     <% if defined? @force_polling and @force_polling -%>
     --force-polling \
     <% end -%>
