@@ -50,6 +50,11 @@ python_pip "lxml" do
   version "3.3.5"
 end
 
+# Install watchdog using pip
+python_pip "watchdog" do
+  version "0.8.1"
+end
+
 
 # uWSGI
 # -----
@@ -193,4 +198,71 @@ service "#{runit_service_name} start" do
   service_name runit_service_name
   action :start
   notifies :restart, "service[nginx]"
+end
+
+# Create a watcher deamon that will restart uwsgi on any file change
+if node[:watcher][:install] and  %( development ).include? node.chef_environment
+
+  # Create the folder for the script
+  directory node[:watcher][:bin_path] do
+    mode 00775
+    recursive true
+    action :create
+  end
+
+  # Create the file watcher script
+  template File.join(node[:watcher][:bin_path], node[:watcher][:bin_name]) do
+    source "python/watcher.py.erb"
+    owner node[:core][:user]
+    group node[:core][:group]
+    mode 00775
+  end
+
+  runit_service_name = node[:watcher][:bin_name]
+  runit_service_folder = File.join([node['runit']['sv_dir'], runit_service_name])
+
+  # Create folder for `control` scripts
+  directory File.join([runit_service_folder, "control"]) do
+    mode 00775
+    recursive true
+    action :create
+  end
+
+  # Create folder for log script (just needed by runit)
+  directory File.join([runit_service_folder, "log"]) do
+    mode 00775
+    recursive true
+    action :create
+  end
+
+  # Create log (`run`) script (just needed by runit)
+  file File.join([runit_service_folder, "log", "run"]) do
+    content "#!/bin/sh"
+    mode 00775
+  end
+
+  # Create `run` (up/start/main) script
+  template File.join([runit_service_folder, "run"]) do
+    source "runit/run-watcher.erb"
+    mode 00775
+    variables({
+      :script_fullpath => File.join(node[:watcher][:bin_path], node[:watcher][:bin_name]),
+      :force_polling => node[:watcher][:polling],
+      :delay => node[:watcher][:delay],
+      :path_to_watch => node[:watcher][:watch_path],
+      :command_to_execute => node[:watcher][:command],
+      :filename_pattern => node[:watcher][:filename_pattern],
+    })
+  end
+
+  # Enable the runit service
+  runit_service runit_service_name do
+    sv_templates false
+  end
+
+  # Restart runit sevice
+  service runit_service_name do
+    action :restart
+  end
+
 end

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+exec \
+  <%= @script_fullpath %> \
+    <% if defined? @force_polling and @force_polling -%>
+    --force-polling \
+    <% end -%>
+    <% if defined? @filename_pattern and @filename_pattern.is_a?(Array) and not @filename_pattern.empty? -%>
+    --filename-pattern <%= "'#{@filename_pattern.join("' '")}'" %> \
+    <% end -%>
+    <% if defined? @regex_pattern and @regex_pattern.is_a?(Array) and not @regex_pattern.empty? -%>
+    --filename-pattern <%= "'#{@regex_pattern.join("' '")}'" %> \
+    <% end -%>
+    --delay <%= @delay %> \
+    --watch '<%= @path_to_watch %>' \
+    --command '<%= @command_to_execute %>'
