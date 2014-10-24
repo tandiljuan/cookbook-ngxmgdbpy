@@ -1,0 +1,193 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+#
+# Copyright 2014 Juan Manuel Lopez
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+import sys
+import os
+import logging
+import time
+import re
+import fnmatch
+import argparse
+import subprocess
+from threading import Timer
+from watchdog.observers import Observer
+from watchdog.observers.polling import PollingObserver
+from watchdog.events import FileSystemEventHandler
+
+# Setup Logger
+logger = logging.getLogger('FileWatcherLogger')
+formatter = logging.Formatter('[%(levelname)s] %(message)s')
+consoleHandler = logging.StreamHandler()
+consoleHandler.setLevel(10)
+consoleHandler.setFormatter(formatter)
+fileHandler = logging.FileHandler(os.path.dirname(os.path.realpath(__file__)) + '/filewatcher.log')
+fileHandler.setLevel(10)
+fileHandler.setFormatter(formatter)
+logger.addHandler(consoleHandler)
+logger.addHandler(fileHandler)
+logger.setLevel(10)
+
+# Flag to call the command after the defined delay
+COMMAND_FLAG = False
+
+
+def call_custom_command(command):
+    global COMMAND_FLAG
+
+    logger.info("Execute custom command '%s'" % command)
+
+    try:
+        output = subprocess.check_output(
+                     command,
+                     stderr=subprocess.STDOUT,
+                     shell=True)
+    except Exception as e:
+        logger.error("ERROR: Executing the command (%s)" % e)
+
+    COMMAND_FLAG = False
+
+
+# Custom class to handle file events
+class CustomEventHandler(FileSystemEventHandler):
+
+    _wait = None
+    _command = None
+    _filename_pattern = []
+    _regex_pattern = []
+
+    def __init__(self, wait=None, command=None, filename_pattern=[], regex_pattern=[]):
+
+        super(CustomEventHandler, self).__init__()
+
+        self._wait = wait
+        self._command = command
+        self._filename_pattern = filename_pattern
+        self._regex_pattern = regex_pattern
+
+    def handle_custom_command(self, path):
+        global COMMAND_FLAG
+
+        if not COMMAND_FLAG:
+            t = Timer(self._wait, call_custom_command, args=[self._command])
+            t.start()
+            logger.info("Executing custom command in %s seconds" % self._wait)
+            COMMAND_FLAG = True
+
+    def match_pattern(self, path):
+
+        for i in self._filename_pattern:
+            if fnmatch.fnmatch(path, i):
+                return True
+
+        for i in self._regex_pattern:
+            if re.search(i, path):
+                return True
+
+        return False
+
+    def on_created(self, event):
+        path = event.src_path
+
+        if self.match_pattern(path):
+            logger.info("[CREATED]  %s" % path)
+            self.handle_custom_command(path)
+
+    def on_deleted(self, event):
+        path = event.src_path
+
+        if self.match_pattern(path):
+            logger.info("[DELETED]  %s" % path)
+            self.handle_custom_command(path)
+
+    def on_modified(self, event):
+        path = event.src_path
+
+        if self.match_pattern(path):
+            logger.info("[MODIFIED] %s" % path)
+            self.handle_custom_command(path)
+
+    def on_moved(self, event):
+        path = event.src_path
+
+        if self.match_pattern(path):
+            logger.info("[MOVED]    %s" % path)
+            self.handle_custom_command(path)
+
+
+if __name__ == "__main__":
+
+    DEFAULT_SECONDS = 2
+
+    # Define script parameters
+    parser = argparse.ArgumentParser(description='Script to call a command on file events')
+    parser.add_argument('-p', '--force-polling', action='store_true', help='Force to use polling to detect file changes')
+    parser.add_argument('-d', '--delay', metavar='SECONDS', type=int, nargs=1, help='Time (in seconds) to wait until the command is called (default %s)' % DEFAULT_SECONDS)
+    parser.add_argument('-w', '--watch', metavar='PATH', type=str, nargs=1, required=True, help='Path that will be watched')
+    parser.add_argument('-c', '--command', metavar='COMMAND', type=str, nargs=1, required=True, help='Command to call on file events')
+    parser.add_argument('-re', '--regex-pattern', metavar='PATTERN', type=str, nargs='*', help='Regular Expression used to match files from which listen the events')
+    parser.add_argument('-fn', '--filename-pattern', metavar='PATTERN', type=str, nargs='*', help='File Name Expression used to match files from which listen the events')
+    args = parser.parse_args()
+
+    # Init variables
+    filename_pattern = args.filename_pattern if args.filename_pattern else []
+    regex_pattern = args.regex_pattern if args.regex_pattern else []
+    seconds = args.delay.pop() if args.delay else DEFAULT_SECONDS
+    path = args.watch.pop() if args.watch else ''
+    command = args.command.pop() if args.command else ''
+
+    logger.info("--------------------")
+    logger.info("FILENAME PATTERN: %s" % filename_pattern)
+    logger.info("REGEX PATTERN:    %s" % regex_pattern)
+    logger.info("SECONDS:          %s" % seconds)
+    logger.info("PATH:             %s" % path)
+    logger.info("COMMAND:          %s" % command)
+    logger.info("--------------------")
+
+    # Check if the given path exist and is readable
+    if not os.path.isdir(path) or not os.access(path, os.R_OK):
+        logger.error("ERROR: Cant read the given path '%s'" % path)
+        parser.print_help()
+        sys.exit(1)
+
+    # Init the event handler class
+    event_handler = CustomEventHandler(
+        wait=seconds,
+        command=command,
+        filename_pattern=filename_pattern,
+        regex_pattern=regex_pattern
+        )
+
+    # Check if use polling or not
+    if args.force_polling:
+        observer = PollingObserver()
+    else:
+        observer = Observer()
+
+    # Start listening for file events
+    observer.schedule(event_handler, path, recursive=True)
+    observer.daemon=False
+    observer.start()
+
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        observer.stop()
+
+    observer.join()
