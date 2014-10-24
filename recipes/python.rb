@@ -23,36 +23,30 @@ include_recipe "runit"
 # Install python and pip
 include_recipe "python"
 
-# Install uWSGI using pip
-python_pip "uwsgi" do
-  version "2.0.6"
-end
-
-# Install PyMongo using pip
-python_pip "pymongo" do
-  version "2.7.2"
-end
-
-# Install Bottle using pip
-python_pip "bottle" do
-  version "0.12.7"
-end
-
-# Install lxml dependencies with apt
+# Install dependencies with apt
+# -----------------------------
+# lxml                 -> libxml2-dev libxslt-dev libz-dev
 %w( libxml2-dev libxslt-dev libz-dev ).each do |debpkg|
   package debpkg do
     action :install
   end
 end
 
-# Install lxml using pip
-python_pip "lxml" do
-  version "3.3.5"
-end
+# Listo of Python modules to install
+modules = {
+  # Pick modules from PyPI
+  "bottle" => "0.12.7",
+  "lxml" => "3.3.5",
+  "pymongo" => "2.7.2",
+  "uwsgi" => "2.0.6",
+  "watchdog" => "0.8.1",
+}
 
-# Install watchdog using pip
-python_pip "watchdog" do
-  version "0.8.1"
+# Install Python modules using pip
+modules.each do |module_name, module_version|
+  python_pip module_name do
+    version module_version
+  end
 end
 
 
