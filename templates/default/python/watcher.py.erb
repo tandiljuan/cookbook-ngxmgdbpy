@@ -20,6 +20,7 @@
 import sys
 import os
 import logging
+import logging.handlers
 import time
 import re
 import fnmatch
@@ -32,16 +33,6 @@ from watchdog.events import FileSystemEventHandler
 
 # Setup Logger
 logger = logging.getLogger('FileWatcherLogger')
-formatter = logging.Formatter('[%(levelname)s] %(message)s')
-consoleHandler = logging.StreamHandler()
-consoleHandler.setLevel(10)
-consoleHandler.setFormatter(formatter)
-fileHandler = logging.FileHandler(os.path.dirname(os.path.realpath(__file__)) + '/filewatcher.log')
-fileHandler.setLevel(10)
-fileHandler.setFormatter(formatter)
-logger.addHandler(consoleHandler)
-logger.addHandler(fileHandler)
-logger.setLevel(10)
 
 # Flag to call the command after the defined delay
 COMMAND_FLAG = False
@@ -132,7 +123,9 @@ class CustomEventHandler(FileSystemEventHandler):
 
 if __name__ == "__main__":
 
+
     DEFAULT_SECONDS = 2
+    LOG_FILE = os.path.splitext(os.path.realpath(__file__))[0] + '.log'
 
     # Define script parameters
     parser = argparse.ArgumentParser(description='Script to call a command on file events')
@@ -142,6 +135,8 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--command', metavar='COMMAND', type=str, nargs=1, required=True, help='Command to call on file events')
     parser.add_argument('-re', '--regex-pattern', metavar='PATTERN', type=str, nargs='*', help='Regular Expression used to match files from which listen the events')
     parser.add_argument('-fn', '--filename-pattern', metavar='PATTERN', type=str, nargs='*', help='File Name Expression used to match files from which listen the events')
+    parser.add_argument('-q', '--quiet', action='store_true', help='Make output less verbose')
+    parser.add_argument('--log-to-file', action='store_true', help='Also log output to a file')
     args = parser.parse_args()
 
     # Init variables
@@ -151,18 +146,35 @@ if __name__ == "__main__":
     path = args.watch.pop() if args.watch else ''
     command = args.command.pop() if args.command else ''
 
-    logger.info("--------------------")
-    logger.info("FILENAME PATTERN: %s" % filename_pattern)
-    logger.info("REGEX PATTERN:    %s" % regex_pattern)
-    logger.info("SECONDS:          %s" % seconds)
-    logger.info("PATH:             %s" % path)
-    logger.info("COMMAND:          %s" % command)
-    logger.info("--------------------")
+    # Log to STDOUT
+    if args.quiet:
+        logging.disable(logging.CRITICAL)
+        logger.propagate = False
+        logger.setLevel(0)
+    else:
+        consoleHandler = logging.StreamHandler()
+        consoleHandler.setFormatter(logging.Formatter('%(message)s'))
+        logger.addHandler(consoleHandler)
+        logger.setLevel(10)
+
+    # Log to file
+    if args.log_to_file and not args.quiet:
+        fileHandler = logging.handlers.RotatingFileHandler(LOG_FILE, maxBytes=1048576, backupCount=5)
+        fileHandler.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s] %(message)s'))
+        logger.addHandler(fileHandler)
+        logger.setLevel(10)
+
+    logger.debug("--------------------")
+    logger.debug("FILENAME PATTERN: %s" % filename_pattern)
+    logger.debug("REGEX PATTERN:    %s" % regex_pattern)
+    logger.debug("SECONDS:          %s" % seconds)
+    logger.debug("PATH:             %s" % path)
+    logger.debug("COMMAND:          %s" % command)
+    logger.debug("--------------------")
 
     # Check if the given path exist and is readable
     if not os.path.isdir(path) or not os.access(path, os.R_OK):
         logger.error("ERROR: Cant read the given path '%s'" % path)
-        parser.print_help()
         sys.exit(1)
 
     # Init the event handler class
