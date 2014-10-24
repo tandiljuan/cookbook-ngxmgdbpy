@@ -89,3 +89,13 @@ default[:uwsgi][:threads]     = 1
 
 # runit Settings
 default[:runit][:log_path] = "/var/log/service/#{node[:core][:project_name].downcase}"
+
+# File change watcher
+default[:watcher][:install]          = true
+default[:watcher][:bin_path]         = "/opt/bin"
+default[:watcher][:bin_name]         = "filewatcher"
+default[:watcher][:polling]          = true
+default[:watcher][:delay]            = 1 # seconds
+default[:watcher][:watch_path]       = File::join(node[:python][:project_path], node[:python][:project_module])
+default[:watcher][:command]          = "service #{node[:core][:project_name].downcase} restart"
+default[:watcher][:filename_pattern] = %w( *.py )
