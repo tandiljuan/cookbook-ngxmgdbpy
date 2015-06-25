@@ -17,10 +17,7 @@
 # limitations under the License.
 #
 
-# Ensure that the build-essential recipe is the first one to be executed.
-include_recipe 'build-essential::default'
-
-include_recipe "cookbook-ngxmgdbpy::init"
+include_recipe "cookbook-core"
 include_recipe "cookbook-ngxmgdbpy::nginx"
 include_recipe "cookbook-ngxmgdbpy::mongodb"
 include_recipe "cookbook-ngxmgdbpy::python"
