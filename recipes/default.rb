@@ -18,6 +18,6 @@
 #
 
 include_recipe "cookbook-core"
-include_recipe "cookbook-ngxmgdbpy::nginx"
 include_recipe "cookbook-ngxmgdbpy::mongodb"
+include_recipe "cookbook-ngxmgdbpy::nginx"
 include_recipe "cookbook-ngxmgdbpy::python"
