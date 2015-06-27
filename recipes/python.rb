@@ -25,8 +25,8 @@ include_recipe "python"
 
 # Install dependencies with apt
 # -----------------------------
-# lxml                 -> libxml2-dev libxslt-dev libz-dev
-%w( libxml2-dev libxslt-dev libz-dev ).each do |debpkg|
+# lxml -> libxml2-dev libxslt-dev libz-dev libffi-dev libssl-dev
+%w( libxml2-dev libxslt-dev libz-dev libffi-dev libssl-dev ).each do |debpkg|
   package debpkg do
     action :install
   end
@@ -36,7 +36,7 @@ end
 modules = {
   # Pick modules from PyPI
   "bottle" => "0.12.7",
-  "lxml" => "3.3.5",
+  "lxml" => "3.3.5", # Needs 1024Mb of memory to compile
   "pymongo" => "2.7.2",
   "uwsgi" => "2.0.6",
   "watchdog" => "0.8.1",
