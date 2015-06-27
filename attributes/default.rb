@@ -61,7 +61,7 @@ default[:mongodb][:users]            = [{
 
 # Python Settings
 default[:python][:project_path]   = node[:core][:project_path]
-default[:python][:project_module] = "module"
+default[:python][:project_module] = "" # Default bottle script doesn't have a module
 default[:python][:project_entry]  = "application"
 default[:python][:project_file]   = "application.py"
 default[:python][:use_module]     = false
