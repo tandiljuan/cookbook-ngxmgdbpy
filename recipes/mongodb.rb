@@ -42,6 +42,6 @@ include_recipe "mongodb"
 include_recipe "mongodb::user_management"
 
 # Restart mongodb sevice
-service "mongodb" do
-  action :restart
+log "Restart MongoDB immediately" do
+  notifies :restart, "service[mongodb]", :immediately
 end
